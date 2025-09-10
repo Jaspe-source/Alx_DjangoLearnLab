@@ -27,7 +27,7 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("login")  # redirect to login after successful registration
+            return redirect("login")
     else:
         form = UserCreationForm()
     return render(request, "relationship_app/register.html", {"form": form})
@@ -63,18 +63,18 @@ def member_view(request):
 
 
 # ==========================
-# Task 4: Permission-Based Book Views
+# Task 4: Permission-Based Book Views (using custom permissions)
 # ==========================
-@permission_required("relationship_app.add_book")
+@permission_required("relationship_app.can_add_book")
 def add_book(request):
     return render(request, "relationship_app/add_book.html")
 
-@permission_required("relationship_app.change_book")
+@permission_required("relationship_app.can_change_book")
 def edit_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, "relationship_app/edit_book.html", {"book": book})
 
-@permission_required("relationship_app.delete_book")
+@permission_required("relationship_app.can_delete_book")
 def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     return render(request, "relationship_app/delete_book.html", {"book": book})
