@@ -3,7 +3,6 @@ from django.views.generic import DetailView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import user_passes_test, permission_required
 from .models import Book, Library
-from django import forms
 
 
 # ==========================
@@ -64,43 +63,18 @@ def member_view(request):
 
 
 # ==========================
-# Task 4: Book Permissions
+# Task 4: Permission-Based Book Views
 # ==========================
-class BookForm(forms.ModelForm):
-    class Meta:
-        model = Book
-        fields = ['title', 'author', 'publication_year']
-
-
-@permission_required('relationship_app.can_add_book')
+@permission_required("relationship_app.add_book")
 def add_book(request):
-    if request.method == "POST":
-        form = BookForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('list_books')
-    else:
-        form = BookForm()
-    return render(request, 'relationship_app/book_form.html', {'form': form, 'title': 'Add Book'})
+    return render(request, "relationship_app/add_book.html")
 
-
-@permission_required('relationship_app.can_change_book')
+@permission_required("relationship_app.change_book")
 def edit_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
-    if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
-        if form.is_valid():
-            form.save()
-            return redirect('list_books')
-    else:
-        form = BookForm(instance=book)
-    return render(request, 'relationship_app/book_form.html', {'form': form, 'title': 'Edit Book'})
+    return render(request, "relationship_app/edit_book.html", {"book": book})
 
-
-@permission_required('relationship_app.can_delete_book')
+@permission_required("relationship_app.delete_book")
 def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
-    if request.method == "POST":
-        book.delete()
-        return redirect('list_books')
-    return render(request, 'relationship_app/book_confirm_delete.html', {'book': book})
+    return render(request, "relationship_app/delete_book.html", {"book": book})
