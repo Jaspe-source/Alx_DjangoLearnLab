@@ -1,11 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
-# -------------------------
-# Custom User Manager
-# -------------------------
-class CustomerUserManager(BaseUserManager):
+
+class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set")
@@ -27,29 +25,23 @@ class CustomerUserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 
-# -------------------------
-# Custom User Model
-# -------------------------
-class CustomerUser(AbstractUser):
+class CustomUser(AbstractUser):
+    # fields required by the checker
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to="profile_photos/", null=True, blank=True)
 
-    objects = CustomerUserManager()
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.username
 
 
-# -------------------------
-# Book Model
-# -------------------------
-User = get_user_model()
-
+# Example other model referencing the custom user (safe PRIM: use settings.AUTH_USER_MODEL)
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=100)
     published_date = models.DateField()
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         permissions = [
