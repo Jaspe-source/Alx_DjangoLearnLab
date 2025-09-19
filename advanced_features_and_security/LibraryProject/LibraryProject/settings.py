@@ -144,3 +144,23 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Ensure cookies are sent only over HTTPS (production-ready)
 CSRF_COOKIE_SECURE = True  
 SESSION_COOKIE_SECURE = True  
+# ===============================
+# Security configurations for HTTPS
+# ===============================
+
+# Redirect all non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Secure cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Security headers
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
