@@ -1,5 +1,5 @@
 # api/views.py
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework import viewsets, permissions
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import Book
@@ -26,5 +26,14 @@ class BookViewSet(viewsets.ModelViewSet):
         # set owner automatically
         serializer.save(owner=self.request.user)
 class BookList(generics.ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+    # New CRUD ViewSet
+class BookViewSet(viewsets.ModelViewSet):
+    """
+    A viewset that provides the standard CRUD actions
+    (list, create, retrieve, update, destroy) for the Book model.
+    """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
