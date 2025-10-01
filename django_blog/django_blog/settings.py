@@ -77,13 +77,9 @@ WSGI_APPLICATION = 'django_blog.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "django_blog_db",
-        "USER": "postgres",
-        "PASSWORD": "password",
-        "HOST": "localhost",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -132,3 +128,14 @@ STATICFILES_DIRS = []  # We’ll keep static inside apps for now
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# After INSTALLED_APPS ensure messages and auth are present by default
+LOGIN_REDIRECT_URL = "/"            # where to send after login
+LOGOUT_REDIRECT_URL = "/"           # after logout
+LOGIN_URL = "login"
+
+# If you added Profile with ImageField:
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"     # if using pathlib style BASE_DIR
+
+# Ensure templates settings include request and messages context processors (already present earlier)
