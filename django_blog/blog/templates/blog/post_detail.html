@@ -31,3 +31,11 @@
 {% else %}
   <p><a href="{% url 'login' %}">Log in</a> to post a comment.</p>
 {% endif %}
+
+<p><strong>Tags:</strong>
+  {% for tag in post.tags.all %}
+    <a href="{% url 'tag-posts' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+  {% empty %}
+    No tags
+  {% endfor %}
+</p>
