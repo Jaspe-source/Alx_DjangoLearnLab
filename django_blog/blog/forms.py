@@ -29,7 +29,7 @@ class UserUpdateForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content']   # author & published_date handled automatically
+        fields = ['title', 'content', 'tags']   # author & published_date handled automatically
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Post title'}),
             'content': forms.Textarea(attrs={'rows': 10, 'placeholder': 'Write your post here...'}),
