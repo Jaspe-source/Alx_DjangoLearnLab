@@ -1,15 +1,13 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserCreationForm, UserUpdateForm, PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
-from .models import Post, Comment
-from .forms import CommentForm
 from django.db.models import Q
-from .models import Post, Tag
 
+from .forms import CustomUserCreationForm, UserUpdateForm, PostForm, CommentForm
+from .models import Post, Comment
 
 def register(request):
     if request.method == "POST":
@@ -21,7 +19,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, "blog/register.html", {"form": form})
-
 
 @login_required
 def profile(request):
@@ -36,22 +33,19 @@ def profile(request):
 
     return render(request, "blog/profile.html", {"u_form": u_form})
 
-
 # ---------------------------
 # Blog CRUD Views
 # ---------------------------
 
 class PostListView(ListView):
     model = Post
-    template_name = "blog/home.html"  # template should be blog/home.html
+    template_name = "blog/home.html"
     context_object_name = "posts"
-    ordering = ["-date_posted"]  # latest first
-
+    ordering = ["-created_at"]
 
 class PostDetailView(DetailView):
     model = Post
     template_name = "blog/post_detail.html"
-
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -61,7 +55,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -76,7 +69,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = self.get_object()
         return self.request.user == post.author
 
-
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = "blog/post_confirm_delete.html"
@@ -86,14 +78,17 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         post = self.get_object()
         return self.request.user == post.author
 
+# ---------------------------
+# Comments
+# ---------------------------
+
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
-    template_name = "blog/comment_form.html"  # we'll create this template
-    # we won't set success_url here; we'll redirect to post detail in form_valid
+    template_name = "blog/comment_form.html"
 
     def form_valid(self, form):
-        post_pk = self.kwargs.get('post_pk')
+        post_pk = self.kwargs.get('pk')
         post = get_object_or_404(Post, pk=post_pk)
         form.instance.author = self.request.user
         form.instance.post = post
@@ -101,7 +96,6 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
-
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
@@ -115,18 +109,20 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         comment = self.get_object()
         return self.request.user == comment.author
 
-
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = "blog/comment_confirm_delete.html"
 
     def get_success_url(self):
-        # redirect to the post's detail page after deletion
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
 
     def test_func(self):
         comment = self.get_object()
         return self.request.user == comment.author
+
+# ---------------------------
+# Search + Tags
+# ---------------------------
 
 class SearchResultsView(ListView):
     model = Post
@@ -142,7 +138,6 @@ class SearchResultsView(ListView):
                 Q(tags__name__icontains=query)
             ).distinct()
         return Post.objects.none()
-
 
 class TagPostListView(ListView):
     model = Post

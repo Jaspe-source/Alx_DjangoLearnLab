@@ -1,22 +1,6 @@
-# blog/urls.py
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import (
-    register,
-    profile,
-    PostListView,
-    PostDetailView,
-    PostCreateView,
-    PostUpdateView,
-    PostDeleteView,
-     CommentCreateView,
-    CommentUpdateView,
-    CommentDeleteView,
-)
-
-from django.urls import path
 from . import views
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Post CRUD
@@ -27,7 +11,7 @@ urlpatterns = [
     path("posts/<int:pk>/update/", views.PostUpdateView.as_view(), name="post-update"),
     path("posts/<int:pk>/delete/", views.PostDeleteView.as_view(), name="post-delete"),
 
-    # Comments (checker-specific requirements)
+    # Comments
     path("post/<int:pk>/comments/new/", views.CommentCreateView.as_view(), name="comment-create"),
     path("comment/<int:pk>/update/", views.CommentUpdateView.as_view(), name="comment-update"),
     path("comment/<int:pk>/delete/", views.CommentDeleteView.as_view(), name="comment-delete"),

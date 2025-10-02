@@ -1,9 +1,20 @@
 {% extends "blog/base.html" %}
 {% block content %}
   <h2>Posts tagged with "{{ view.kwargs.tag_name }}"</h2>
+  
   {% for post in posts %}
-    <h3><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h3>
+    <div class="post">
+      <h3><a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h3>
+      <p>{{ post.content|truncatewords:25 }}</p>
+      <p><strong>Tags:</strong>
+        {% for tag in post.tags.all %}
+          <a href="{% url 'tag-posts' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+        {% empty %}
+          No tags
+        {% endfor %}
+      </p>
+    </div>
   {% empty %}
-    <p>No posts found under this tag.</p>
+    <p>No posts found with this tag.</p>
   {% endfor %}
 {% endblock %}
