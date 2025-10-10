@@ -26,3 +26,16 @@ cd Alx_DjangoLearnLab/social_media_api
 - `GET /api/posts/feed/` — Returns posts authored by users the current (authenticated) user follows.
   - Ordered by newest first.
   - Supports pagination and `?search=` query on post title/content.
+
+
+## Likes & Notifications
+
+### Like a post
+`POST /api/posts/posts/{id}/like/` — like a post (authenticated). Creates a Notification for the post author.
+
+### Unlike a post
+`POST /api/posts/posts/{id}/unlike/` — unlike a post (authenticated).
+
+### Notifications
+`GET /api/notifications/` — list notifications for the authenticated user (unread first).
+`PATCH /api/notifications/{id}/read/` — mark notification as read.
