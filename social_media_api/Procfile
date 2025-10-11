@@ -1,0 +1,12 @@
+web: gunicorn social_media_api.wsgi
+services:
+  - type: web
+    name: social-media-api
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn social_media_api.wsgi
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
