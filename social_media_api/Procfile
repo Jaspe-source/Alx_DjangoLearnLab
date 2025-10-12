@@ -1,4 +1,5 @@
-web: gunicorn social_media_api.wsgi
+web: gunicorn social_media_api.wsgi:application
+
 services:
   - type: web
     name: social-media-api
